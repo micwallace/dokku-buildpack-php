@@ -66,6 +66,14 @@ http {
             ''      close;
     }
 
+    location /socket.io/ {
+                proxy_pass ​http://127.0.0.1:8080;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection $connection_upgrade;
+                proxy_read_timeout 86400;
+    }
+
     server {
         server_name localhost;
         listen <%= ENV['PORT'] %>;
@@ -74,16 +82,6 @@ http {
         charset utf-8;
 
         include site.conf;
-
-        location /socket.io/ {
-
-            proxy_pass ​http://127.0.0.1:8080;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection $connection_upgrade;
-            proxy_read_timeout 86400;
-
-        }
 
         <% Shellwords.split(ENV['NGINX_INCLUDES'].to_s).each do |f| %>
         include /app/<%= f %>;
